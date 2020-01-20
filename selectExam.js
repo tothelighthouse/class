@@ -3,6 +3,8 @@ function init() {
   var button = document.getElementsByTagName("button")
   button[0].addEventListener("click", changeColor, false)
   function changeColor() {
+    var listItems = document.getElementsByTagName("li");
+
     //람다식 사용법
     //1) Array.from()으로 listItems 를 iterable 하게 변환한후 사용
     //1-1) forEach문의 매개변수로 익명함수로 사용, 
