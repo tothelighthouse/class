@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script>
+        //해석: 그는 그녀가 채식주의자가 되는것이 좋다고 생각했다.
+        //5형식 가목적어 구문을 5형식 가주어 문장, 즉 수동태로 전환
+        var sentence = [
+            { component: "subject", content: "He" },
+            { component: "verb", content: "thought" },
+            { component: "dummy_object", content: "it" },
+            { component: "comp_subject", content: "best" },
+            { component: "meaning_subject", content: "for her" },
+            { component: "to_inf", content: "to become a vegetarian" },
+        ]
+        //클로져 정의
+        //클로져를 사용한 이유: 
+        //1) bySubjectToEnd 함수 바디에서 실행되는 findIndex 매개변수로 함수를 정의
+        //2) 찾고자 하는 단어를 클로져에 미리 쓰면 재사용 불가
+        //3) 함수 호출시 찾고자 하는 단어를 매개변수로 사용하여 재사용 가능하도록 함
+        function isEqualWrapper(targetWord){
+            var word = targetWord
+            function isEqual(e){
+                return e.component == word;
+            }
+            return isEqual;
+        }
+        var input = isEqualWrapper;
+        console.log(input)
+        var s1 = passiveVerb(sentence);
+        //아래 클로져를 매개변수로 넘기면 isEqualWrapper 함수의 매개변수인 "subject"를 렉시컬 스코핑으로 물고 있으면서
+        //클로져가 대기하는데 
+        //클로져를 실행하지 않고 isEqualWrapper 로 실행하지 않고 함수 바디 자체를 넘겨도 (결과 관계 없이) 실행이 되는 이유를 모르겠음
+        //즉 이렇게 해도 실행이 됨 var s2 = bySubjectToEnd(s1,isEqualWrapper);
+        var s2 = bySubjectToEnd(s1,isEqualWrapper("subject")); //클로져 재사용
+        var s3 = itToDummySubject(s2);
+        s3.forEach(i => console.log(i.component, "=", i.content));
+        
+
+        //1) 동사 수동형 변경 (is 추가)
+        function passiveVerb(target) {
+            const isEqual = (e) => e.component == "verb"
+            const findNo = target.findIndex(isEqual)
+            console.log(findNo)
+            target[findNo].content = "is" + " " + target[findNo].content;
+            return target;
+        }
+        // 2) 주어 by 추가후 문장 끝으로 이동
+        function bySubjectToEnd(target, isEqual) {
+            const findNo = target.findIndex(isEqual)
+            target.push({ component: "by_subject", content: "by"+" "+target[findNo].content})
+            
+            return target;
+        }
+        // 3) it 가목적어를 가주어로 이동
+        function itToDummySubject(target) {
+            for (item of target) {
+                if (item.component == "dummy_object") {
+                    target.push({ component: "dummy_subject", content: item.content })
+                    target[0] = target[target.length - 1]
+                }
+            }
+            target.pop();
+            target.splice(2, 1)
+            return target;
+        }
+
+
+
+    </script>
+</head>
+
+<body>
+
+</body>
+
+</html>
