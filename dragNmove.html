@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script>
+    window.addEventListener("load", init, false)
+    function init() {
+      dragElement(document.getElementById("mydiv"))
+
+      //움직이게 할 요소를 매개변수로 전달
+      function dragElement(elmnt) {
+        if (document.getElementById(elmnt.id + "header")) {
+          //header가 있는 경우 header 부분에 onmousedown 리스너를 설정 (dragMouseDown)
+          document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+        } else {
+          //없는 경우에는 div 전체에 onmousedown 리스너를 설정 (dragMouseDown)
+          elmnt.onmousedown = dragMouseDown;
+
+        }
+        //dragElement 
+        function dragMouseDown(e) {
+          // e = e || window.event;
+          // e.preventDefault();
+
+          //1) 클릭된 현재 위치 윈도우를 기준으로 저장
+          pos3 = e.clientX;
+          pos4 = e.clientY;
+          //2)window에 onmousemove 리스너 (elementDrag) 설정
+          document.onmousemove = elementDrag;
+          //           onmouseup 리스너 (closeElementDrag) 설정
+          document.onmouseup = closeElementDrag;
+        }
+
+        //elementDrag
+        function elementDrag(e) {
+          // e = e || window.event;
+          // e.preventDefault();
+
+          //이동한 거리 = 전달 받은 이전 현재위치 - 현재위치
+          pos1 = pos3 - e.clientX;
+          pos2 = pos4 - e.clientY;
+          //현재 위치 갱신
+          pos3 = e.clientX;
+          pos4 = e.clientY;
+          //클릭된 객체의 이동할 거리 (윈도우 기준으로 객체내에서 클릭된 위치에서 이동한 거리 차이를 입력)
+          elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+          elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+        }
+        //closeElementDrag
+        function closeElementDrag(e) {
+          //윈도우 객체의 onmouseup, onmousemove 리스너 해제
+          document.onmouseup = null;
+          document.onmousemove = null;
+        }
+      }
+    }
+  </script>
+    <style>
+      #mydiv {
+        position: absolute;
+        z-index: 9;
+        background-color: #f1f1f1;
+        border: 1px solid #d3d3d3;
+        text-align: center;
+      }
+  
+      #mydivheader {
+        padding: 10px;
+        cursor: move;
+        z-index: 10;
+        background-color: #2196F3;
+        color: #fff;
+      }
+    </style>
+</head>
+
+<body>
+  <div id="mydiv">
+    <div id="mydivheader"></div>
+    <p>move</p>
+    <p>this</p>
+    <p>DIV</p>
+
+
+  </div>
+
+</body>
+
+</html>
